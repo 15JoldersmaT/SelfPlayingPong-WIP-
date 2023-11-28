@@ -18,30 +18,21 @@ wall2Y = 350
 runners = []
 bestDistance = 0
 mutateRate = .4
-advancesLeft = 1
-advancesRight = 1
 
-
-
+#next line of obstacles
+strip = []
 
 bestRunner = ''
 
+obstacles = []
 
-
-bestLeft = 10000
+bestLeft = 100000
 bestRight = 10000
 
-worstLeft = 10000
-
-gameTimer = 1800
-gameTimerMax = 1800
+gameTimer = 2800
+gameTimerMax = 2800
 leftScore = 10000
 rightScore = 10000
-lastLeftScore = 10000
-
-
-rotate = 0
-last5LeftAvg = 10000
 #0-4
 lane = 0
 
@@ -67,7 +58,7 @@ class Neural_Network(nn.Module):
 
         self.inputSize =6 # updated to 4
         self.outputSize = 1
-        self.hiddenSize =600
+        self.hiddenSize =60
         
         # weights
         self.W1 = torch.randn(self.inputSize, self.hiddenSize).float() # updated to (4, 3) tensor
@@ -75,20 +66,22 @@ class Neural_Network(nn.Module):
         
     def forward(self, X):
         self.z = torch.matmul(X, self.W1) # 3 X 3 ".dot" does not broadcast in PyTorch
-        self.z2 = self.sigmoid(self.z) # activation function
+        self.z2 = self.leaky_relu(self.z) # activation function
         self.z3 = torch.matmul(self.z2, self.W2.float())
-        o = self.sigmoid(self.z3) # final activation function
+        o = self.leaky_relu(self.z3) # final activation function
+        #print (o)
         return o
         
     def sigmoid(self, s):
         return 1 / (1 + torch.exp(-s))
 
+    def leaky_relu(self, x, alpha=0.01):
+        return np.maximum(alpha * x, x)
+
 bestLeftNet = Neural_Network()
 bestRightNet = Neural_Network()
 
 bestNet  = Neural_Network()
-
-
 
 
 def normalize(x):
@@ -114,82 +107,86 @@ class Ball:
         global gameTimer
         global leftScore
         global rightScore
-        global lastLeftScore
         global bestLeft
         global bestRight
         global bestRightNet
         global bestLeftNet
         global games
         global gameTimerMax
-        global worstLeft
-        global advancesLeft
-        global advancesRight
-        global rotate
-        global last5LeftAvg
         gameTimer = gameTimer -1
         if gameTimer <= 0:
             #New game
             games = games+ 1
-            worstLeft = worstLeft - 5
-            bestLeft = bestLeft + 5
-
-
-             #if leftScore < lastLeftScore:
-            #    advancesRight = advancesRight - 1
-            #    advancesLeft = advancesLeft + 1
-
-            #if leftScore > lastLeftScore:
-            #    advancesLeft = advancesLeft - 1
-            #    advancesRight = advancesRight + 1
-
-                
-                
-            if worstLeft < 10000:
-                worstLeft = 10000
-
             
-            if leftScore > worstLeft:
-                print ('New High Score for Right! ' + str(bestRight)+ ' It took ' + str(games) + ' games')
-                worstLeft = leftScore
-                bestRightNet = paddles[1].net
-
-                
-            elif leftScore < bestLeft:
-                bestLeft = leftScore
+            if leftScore <= rightScore:
+                #print ('New High Score for Left!' + str(bestLeft)+ ' It took ' + str(games) + ' games')
                 bestLeftNet = paddles[0].net
-
-
-            if advancesLeft < 1:
-                advancesLeft = 1
-
-            if advancesRight < 1:
-                advancesRight = 1
-
-
-            if advancesRight > 10:
-                advancesRight = 10
-
-            if advancesLeft > 10:
-                advancesLeft = 10
+            if rightScore < leftScore:
+                bestRightNet = paddles[1].net
                 
-            paddles[0].net.W1 = bestLeftNet.W1 + torch.randn_like( bestLeftNet.W1) * (mutateRate/advancesLeft)
-            paddles[0].net.W2 = bestLeftNet.W2 + torch.randn_like( bestLeftNet.W2) * (mutateRate/advancesLeft)
-           
-            paddles[1].net.W1 = bestRightNet.W1 + torch.randn_like(bestRightNet.W1) * (mutateRate/advancesRight)
-            paddles[1].net.W2 = bestRightNet.W2 + torch.randn_like(bestRightNet.W2) * (mutateRate/advancesRight)
-            mainBall.x = 350
-            mainBall.y = 400
-            mainBall.y = mainBall.y
-            paddles[0].y = 400
-            paddles[1].y = 400
-            mainBall.direction = 'rightStraight'
-     
+            if leftScore < rightScore:
+                mainBall.x = 350
+                mainBall.y = 400
+                mainBall.y = mainBall.y
+                paddles[0].y = 400
+                paddles[1].y = 400
+                mainBall.direction = 'leftStraight'
+
+                    
+                
+                paddles[1].net.W1 = bestRightNet.W1 + torch.randn_like(bestRightNet.W1) * mutateRate
+                paddles[1].net.W2 = bestRightNet.W2 + torch.randn_like(bestRightNet.W2) * mutateRate
+
+
+                
+
+
+                      
+            elif rightScore < leftScore:
+                mainBall.x = 350
+                mainBall.y = 400
+                paddles[0].y = 400
+                paddles[1].y = 400
+                mainBall.direction = 'rightStraight'
+                #update the paddle that failed
+
+
+                paddles[0].net.W1 = bestLeftNet.W1 + torch.randn_like( bestLeftNet.W1) * mutateRate
+                paddles[0].net.W2 = bestLeftNet.W2 + torch.randn_like( bestLeftNet.W2) * mutateRate
+
+             
+                
+
+                
+
+            else:
+                mainBall.x = 350
+                mainBall.y = 400
+                paddles[0].y = 400
+                paddles[1].y = 400
+
+                chan = random.randint(1,2)
+                if chan == 1:
+                    mainBall.direction = 'rightStraight'
+                else:
+                    mainBall.direction = 'rightStraight'
+
+                chan2 = random.randint(1,2)
+
+                if chan2 == 1:
+                    paddles[1].net.W1 = bestRightNet.W1 + torch.randn_like(bestRightNet.W1) * mutateRate
+                    paddles[1].net.W2 = bestRightNet.W2 + torch.randn_like(bestRightNet.W2) * mutateRate
+
+                else:
+                    paddles[0].net.W1 = bestLeftNet.W1 + torch.randn_like( bestLeftNet.W1) * mutateRate
+                    paddles[0].net.W2 = bestLeftNet.W2 + torch.randn_like( bestLeftNet.W2) * mutateRate
+
+                
+
+                
             gameTimer = gameTimerMax
-            lastLeftScore = leftScore
             leftScore = 10000
             rightScore = 10000
-            advancesLeft = 1
-            advancesRight = 1
             
 
         sped = 1
@@ -229,13 +226,12 @@ class Ball:
             if self.direction == 'leftDown':
                 self.direction = 'leftUp'
                 
-        if self.x < 100:
+        if self.x < 70:
             
                 #right score
-            leftScore = leftScore +100
+            rightScore = rightScore - 175
             
-            
-            self.fast = False
+
             self.x = 350
             self.y = 400 
             paddles[0].y = 400
@@ -243,13 +239,11 @@ class Ball:
             mainBall.direction = 'rightStraight'
            
 
-        if self.x > 600:
+        if self.x > 630:
                 #left score
             
-            #rightScore = rightScore+100
-            leftScore = leftScore - 100
+            leftScore = leftScore-175
 
-            self.fast = False
             self.x = 350
             self.y = 400
             paddles[0].y = 400
@@ -288,8 +282,6 @@ class paddle:
         global rightScore
         global gameTimer
         global gameTimerMax
-        global advancesLeft
-        global advancesRight
 
         gameTimerA = (gameTimer-gameTimerMax)/gameTimerMax
         
@@ -304,17 +296,17 @@ class paddle:
         oX = 0
         for paddle in paddles:
             if paddle.side != self.side:
-                oY = (paddle.y-self.y)/100
-                oY2 = (paddle.y)/100
-                oX = (paddle.x)/100
+                oY = (paddle.y-self.y)/500
+                oY2 = (paddle.y)/500
+                oX = (paddle.x)/500
 
 
 
 
 
-        Jx =( bX  -oX)/100
+        Jx =( bX  -oX)/500
     
-        Jy = (bY - oY2)/100
+        Jy = (bY - oY2)/500
         
         
         #How #Potential weak point
@@ -327,7 +319,7 @@ class paddle:
 
         elif mainBall.direction == 'leftUp':
             dirIn = -1.75
-        elif mainBall.direction == 'rightStraight':
+        elif mainBall.direction == 'rightstraight':
             dirIn = 1.0
         elif mainBall.direction == 'rightDown':
             dirIn = .25
@@ -335,8 +327,8 @@ class paddle:
             dirIn = 1.75
         
 
-        x2 = (self.x - mainBall.x)/100
-        y2 =( self.y - mainBall.y)/100
+        x2 = (self.x - mainBall.x)/500
+        y2 =( self.y - mainBall.y)/500
 
         leftScoreA = (leftScore - 10000) / 10000
         rightScoreA = (rightScore - 10000) / 10000
@@ -345,36 +337,23 @@ class paddle:
             spedd = 1
         
         output = self.net.forward(torch.tensor([    
-                                                   
+                                                    [dirIn],
                                                     [spedd],
+                                                    [oY],
                                                     [x2],
                                                     [y2],
-                                                    [oY],
-                                                    [dirIn],
-                                                    [Jy]
-
+                                                    [gameTimerA]
+                              
+                  
                                                     ]).T)
 
         max_index = torch.argmax(output, dim=1)
         if output[0][0] >= .5 :
             self.direct = 'Down'
-            if output[0][0] > .8:
-                self.direct = 'DownFast'
  
         else :
             self.direct = 'Up'
-            if output[0][0] < .2:
-                self.direct = 'UpFast'
-                
-        if self.direct == 'DownFast':
-            self.y +=  2
-            if self.y >600:
-                self.y = 600
-
-        if self.direct == 'UpFast':
-            self.y -= 2
-            if self.y < 200:
-                self.y = 200
+            
 
         if self.direct == 'Down':
             self.y +=  1
@@ -390,7 +369,8 @@ class paddle:
             
             #Ball coming from left
             #size of paddle is 30
-            if mainBall.x < 130 and mainBall.x > 100 and mainBall.y+10  > self.y and mainBall.y+10 < self.y + 60:
+            if mainBall.x < 130 and mainBall.x > 70 and mainBall.y+10  > self.y and mainBall.y+10 < self.y + 60:
+                print ('right')
                 if mainBall.y < self.y + 30:
                     mainBall.fast = True
                 else:
@@ -398,44 +378,34 @@ class paddle:
                 if mainBall.direction == 'leftUp' or mainBall.direction == 'leftStraight' or mainBall.direction == 'leftDown':
                     dirChance = random.randint(0,3)
                     mainBall.x = mainBall.x 
-                    mainBall.y =  mainBall.y 
+                    mainBall.y = mainBall.y 
                     print('Left hit at ' + str(games) + ' games')
                     if dirChance == 1:
                         mainBall.direction = 'rightUp'
                     elif dirChance == 2:
-                        mainBall.direction = 'rightDown'
-                    else:
                         mainBall.direction = 'rightStraight'
-
-                leftScore = leftScore - 50
-                advancesRight = advancesRight + 1
-                if advancesRight < 1:
-                    advancesRight = 1
+                    else:
+                        mainBall.direction = 'rightDown'
 
         else:
             #Ball coming from right
-            if mainBall.x > 570 and mainBall.x < 600 and mainBall.y+10 > self.y and mainBall.y +10< self.y + 60:
+            if mainBall.x > 570 and mainBall.x < 630 and mainBall.y+10 > self.y and mainBall.y +10< self.y + 60:
                 if mainBall.y < self.y + 30:
                     mainBall.fast = True
                 else:
                     mainBall.fast = False
                 if mainBall.direction == 'rightUp' or mainBall.direction == 'rightStraight' or mainBall.direction == 'rightDown':
                     dirChance = random.randint(0,3)
-                    mainBall.x = mainBall.x
-                    mainBall.y = mainBall.y
+                    mainBall.x = mainBall.x 
+                    mainBall.y = mainBall.y 
                     print('Right hit at ' + str(games) + ' games')
                     if dirChance == 1:
                         mainBall.direction = 'leftUp'
                     elif dirChance == 2:
-                        mainBall.direction = 'leftDown'
-                    else:
                         mainBall.direction = 'leftStraight'
-                leftScore = leftScore + 50
-                advancesLeft = advancesLeft + 1
-                if advancesLeft < 1:
-                    advancesLeft = 1
+                    else:
+                        mainBall.direction = 'leftDown'
                         
-                    
                     
 
             
