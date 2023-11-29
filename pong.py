@@ -8,7 +8,7 @@ from torch import nn
 import numpy as np
 
 pygame.init()
-display = pygame.display.set_mode((1300,800))
+display = pygame.display.set_mode((700,700))
 pygame.display.set_caption('Pong')
 
 clock = pygame.time.Clock()
@@ -17,7 +17,7 @@ wall1Y = 300
 wall2Y = 350
 runners = []
 bestDistance = 0
-mutateRate = .4
+mutateRate = .45
 
 #next line of obstacles
 strip = []
@@ -29,8 +29,8 @@ obstacles = []
 bestLeft = 100000
 bestRight = 10000
 
-gameTimer = 2800
-gameTimerMax = 2800
+gameTimer = 1200
+gameTimerMax = 1200
 leftScore = 10000
 rightScore = 10000
 #0-4
@@ -44,7 +44,8 @@ field2 = [0,0,0,
           0,0,0,
           0,0,0]
 
-
+bgColor = (0,random.randint(50, 100),0)
+epoch = 0
 leftWins = 0
 rightWins = 0
 games = 0
@@ -58,7 +59,7 @@ class Neural_Network(nn.Module):
 
         self.inputSize =5 # updated to 4
         self.outputSize = 1
-        self.hiddenSize = 15
+        self.hiddenSize = 55
         
         # weights
         self.W1 = torch.randn(self.inputSize, self.hiddenSize).float() # updated to (4, 3) tensor
@@ -113,6 +114,8 @@ class Ball:
         global bestLeftNet
         global games
         global gameTimerMax
+        global bgColor
+        global epoch
         gameTimer = gameTimer -1
         if gameTimer <= 0:
             #New game
@@ -125,6 +128,9 @@ class Ball:
                 bestRightNet = paddles[1].net
                 
             if leftScore < rightScore:
+                bgColor = (0,random.randint(50, 100),0)
+                epoch += 1
+                
                 mainBall.x = 350
                 mainBall.y = 400
                 mainBall.y = mainBall.y
@@ -143,6 +149,9 @@ class Ball:
 
                       
             elif rightScore < leftScore:
+                bgColor = (0,random.randint(50, 100),0)
+                epoch += 1
+
                 mainBall.x = 350
                 mainBall.y = 400
                 paddles[0].y = 400
@@ -160,6 +169,9 @@ class Ball:
                 
 
             else:
+                bgColor = (0,random.randint(50, 100),0)
+                epoch += 1
+
                 mainBall.x = 350
                 mainBall.y = 400
                 paddles[0].y = 400
@@ -444,11 +456,18 @@ paddles[1] = p2
 
 speedy = 100
 
+myFont = pygame.font.SysFont("Times New Roman", 18)
+
+
 while True:
     
     mx, my = pygame.mouse.get_pos()
+    display.fill(bgColor)
 
-    display.fill((0,0,0))
+    # Render the time and display it
+    time_surface = myFont.render(f"Time: {epoch}", True, (255,255,255))
+    display.blit(time_surface, (10, 10))  # Position it at the bottom of the screen
+    
 
     for paddle in paddles:
         paddle.move()
