@@ -17,7 +17,7 @@ wall1Y = 300
 wall2Y = 350
 runners = []
 bestDistance = 0
-mutateRate = .9
+mutateRate = .4
 
 #next line of obstacles
 strip = []
@@ -124,7 +124,7 @@ class Ball:
             if rightScore < bestRight:
                 bestRightNet = paddles[1].net
                 
-            if leftScore <= rightScore:
+            if leftScore < rightScore:
                 mainBall.x = 350
                 mainBall.y = 400
                 mainBall.y = mainBall.y
@@ -174,12 +174,12 @@ class Ball:
                 chan2 = random.randint(1,2)
 
                 if chan2 == 1:
-                    paddles[1].net.W1 = bestRightNet.W1 + torch.randn_like(bestRightNet.W1) * mutateRate
-                    paddles[1].net.W2 = bestRightNet.W2 + torch.randn_like(bestRightNet.W2) * mutateRate
+                    paddles[1].net.W1 = paddles[1].net.W1 + torch.randn_like(paddles[1].net.W1) * mutateRate
+                    paddles[1].net.W2 = paddles[1].net.W2 + torch.randn_like(paddles[1].net.W2) * mutateRate
 
                 else:
-                    paddles[0].net.W1 = bestLeftNet.W1 + torch.randn_like( bestLeftNet.W1) * mutateRate
-                    paddles[0].net.W2 = bestLeftNet.W2 + torch.randn_like( bestLeftNet.W2) * mutateRate
+                    paddles[0].net.W1 = paddles[0].net.W1 + torch.randn_like( paddles[0].net.W1) * mutateRate
+                    paddles[0].net.W2 = paddles[0].net.W2 + torch.randn_like( paddles[0].net.W2) * mutateRate
 
                 
 
