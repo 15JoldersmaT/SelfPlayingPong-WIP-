@@ -177,13 +177,13 @@ class Ball:
                 paddles[0].y = 400
                 paddles[1].y = 400
 
-                chan = random.randint(0,2)
+                chan = random.randint(0,1)
                 if chan == 1:
                     mainBall.direction = 'rightStraight'
                 else:
                     mainBall.direction = 'leftStraight'
 
-                chan2 = random.randint(0,2)
+                chan2 = random.randint(0,1)
 
                 if chan2 == 1:
                     paddles[1].net.W1 = paddles[1].net.W1 + torch.randn_like(paddles[1].net.W1) * mutateRate
