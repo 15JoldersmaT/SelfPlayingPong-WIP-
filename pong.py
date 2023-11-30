@@ -17,7 +17,7 @@ wall1Y = 300
 wall2Y = 350
 runners = []
 bestDistance = 0
-mutateRate = .45
+mutateRate = .25
 
 #next line of obstacles
 strip = []
@@ -383,6 +383,8 @@ class paddle:
             if mainBall.x < 130 and mainBall.x > 70 and mainBall.y+10  > self.y and mainBall.y+10 < self.y + 60:
                 print ('left1')
                 mainBall.x = 131
+                leftScore = leftScore - 600
+
                 if mainBall.y < self.y + 30:
                     mainBall.fast = True
                 else:
@@ -405,6 +407,8 @@ class paddle:
             #Ball coming from right
             if mainBall.x > 570 and mainBall.x < 630 and mainBall.y+10 > self.y and mainBall.y +10< self.y + 60:
                 mainBall.x = 569
+                rightScore = rightScore - 600
+
                 print('right1')
                 if mainBall.y < self.y + 30:
                     mainBall.fast = True
