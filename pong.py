@@ -57,9 +57,9 @@ class Neural_Network(nn.Module):
     def __init__(self, ):
         super(Neural_Network, self).__init__()
 
-        self.inputSize =5 # updated to 4
+        self.inputSize =4 # updated to 4
         self.outputSize = 1
-        self.hiddenSize = 255
+        self.hiddenSize = 800
         
         # weights
         self.W1 = torch.randn(self.inputSize, self.hiddenSize).float() # updated to (4, 3) tensor
@@ -177,13 +177,13 @@ class Ball:
                 paddles[0].y = 400
                 paddles[1].y = 400
 
-                chan = random.randint(0,1)
+                chan = random.randint(0,2)
                 if chan == 1:
                     mainBall.direction = 'rightStraight'
                 else:
                     mainBall.direction = 'leftStraight'
 
-                chan2 = random.randint(0,1)
+                chan2 = random.randint(0,2)
 
                 if chan2 == 1:
                     paddles[1].net.W1 = paddles[1].net.W1 + torch.randn_like(paddles[1].net.W1) * mutateRate
@@ -308,7 +308,7 @@ class paddle:
         oX = 0
         for paddle in paddles:
             if paddle.side != self.side:
-                oY = (paddle.y-self.y)
+                oY = (paddle.y-self.y)/100
                 oY2 = (paddle.y)
                 oX = (paddle.x)
 
@@ -339,8 +339,8 @@ class paddle:
             dirIn = 1.75
         
 
-        x2 = (self.x - mainBall.x)
-        y2 =( self.y - mainBall.y)
+        x2 = (self.x - mainBall.x)/ 100
+        y2 =( self.y - mainBall.y)/100
 
         leftScoreA = (leftScore - 10000) / 10000
         rightScoreA = (rightScore - 10000) / 10000
@@ -350,7 +350,6 @@ class paddle:
         
         output = self.net.forward(torch.tensor([    
                                                     [dirIn],
-                                                    [spedd],
                                                     [oY],
                                                     [x2],
                                                     [y2]
