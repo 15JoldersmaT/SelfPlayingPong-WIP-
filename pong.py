@@ -59,7 +59,7 @@ class Neural_Network(nn.Module):
 
         self.inputSize =5 # updated to 4
         self.outputSize = 1
-        self.hiddenSize = 55
+        self.hiddenSize = 255
         
         # weights
         self.W1 = torch.randn(self.inputSize, self.hiddenSize).float() # updated to (4, 3) tensor
@@ -177,7 +177,7 @@ class Ball:
                 paddles[0].y = 400
                 paddles[1].y = 400
 
-                chan = random.randint(1,2)
+                chan = random.randint(0,1)
                 if chan == 1:
                     mainBall.direction = 'rightStraight'
                 else:
