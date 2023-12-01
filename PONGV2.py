@@ -33,6 +33,9 @@ gameTimer = 1800
 gameTimerMax = 1800
 leftScore = 10000
 rightScore = 10000
+
+lastLeft = 10000
+lastRight = 10000
 #0-4
 lane = 0
 
@@ -116,8 +119,24 @@ class Ball:
         global gameTimerMax
         global bgColor
         global epoch
+        global mutateRate
+        global lastRight
+        global lastLeft
         gameTimer = gameTimer -1
         if gameTimer <= 0:
+            better = False
+            if lastRight > rightScore and rightScore > leftScore:
+                better = True
+                
+
+            if lastLeft > lastRight and leftScore > rightScore:
+                better = True
+
+            if better==True:
+                mutateRate = mutateRate/2
+                
+            lastLeft = leftScore
+            lastRight = rightScore
             #New game
             games = games+ 1
 
