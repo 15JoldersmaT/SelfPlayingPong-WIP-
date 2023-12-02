@@ -347,7 +347,7 @@ class paddle:
         gameTimerA = (gameTimer-gameTimerMax)/gameTimerMax
         
         bX = mainBall.x
-        bY = mainBall.y
+        bY = mainBall.y/100
 
         yX = mainBall.x - self.x
         yY = self.y
@@ -404,7 +404,6 @@ class paddle:
                                                     [y2],
                                                     [leftScoreA],
                                                     [rightScoreA],
-                                                    #[gameTimerA],
                                                     [spedd]
                                                     
         
