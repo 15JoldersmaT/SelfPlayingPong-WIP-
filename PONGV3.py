@@ -17,7 +17,7 @@ wall1Y = 300
 wall2Y = 350
 runners = []
 bestDistance = 0
-mutateRate = .45
+mutateRate = .75
 
 #next line of obstacles
 strip = []
@@ -71,9 +71,9 @@ class Neural_Network(nn.Module):
     def __init__(self, ):
         super(Neural_Network, self).__init__()
 
-        self.inputSize =7 
+        self.inputSize =4 
         self.outputSize = 1
-        self.hiddenSize = 2100
+        self.hiddenSize = 4000
         
         # weights
         self.W1 = torch.randn(self.inputSize, self.hiddenSize).float() # updated to (4, 3) tensor
@@ -154,7 +154,7 @@ class Ball:
                 better = True
 
             if better==True:
-                mutateRate = mutateRate/2
+                mutateRate = mutateRate/5
                 
             lastLeft = leftScore
             lastRight = rightScore
@@ -287,7 +287,6 @@ class Ball:
             
                 #right score
             leftScore = leftScore + 300
-            rightScore = rightScore - 300
 
             
 
@@ -302,7 +301,6 @@ class Ball:
                 #left score
             
             rightScore = rightScore + 300
-            leftScore = leftScore - 300
 
 
             self.x = 350
@@ -402,9 +400,7 @@ class paddle:
                                                     [oY],
                                                     [x2],
                                                     [y2],
-                                                    [leftScoreA],
-                                                    [rightScoreA],
-                                                    [spedd]
+                                  
                                                     
         
                               
@@ -436,7 +432,7 @@ class paddle:
             if mainBall.x < 130 and mainBall.x > 70 and mainBall.y+10  > self.y and mainBall.y+10 < self.y + 60:
                 print ('left1')
                 mainBall.x = 131
-                #leftScore = leftScore - 300
+                leftScore = leftScore - 300
 
                 if mainBall.y < self.y + 30:
                     mainBall.fast = True
@@ -460,7 +456,7 @@ class paddle:
             #Ball coming from right
             if mainBall.x > 570 and mainBall.x < 630 and mainBall.y+10 > self.y and mainBall.y +10< self.y + 60:
                 mainBall.x = 569
-                #rightScore = rightScore - 300
+                rightScore = rightScore - 300
 
                 print('right1')
                 if mainBall.y < self.y + 30:
