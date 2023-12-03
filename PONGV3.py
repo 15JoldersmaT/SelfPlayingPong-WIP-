@@ -29,8 +29,8 @@ obstacles = []
 bestLeft = 100000
 bestRight = 10000
 
-gameTimer = 1800
-gameTimerMax = 1800
+gameTimer = 1800 * 5
+gameTimerMax = 1800 * 5
 leftScore = 10000
 rightScore = 10000
 
@@ -519,8 +519,11 @@ while True:
     display.fill(bgColor)
 
     # Render the time and display it
-    time_surface = myFont.render(f"Time: {epoch}", True, (255,255,255))
+    time_surface = myFont.render(f"Epoch: {epoch}", True, (255,255,255))
     display.blit(time_surface, (10, 10))  # Position it at the bottom of the screen
+
+    time_surface = myFont.render(f"Time: {gameTimer}", True, (255,255,255))
+    display.blit(time_surface, (10, 30))  # Position it at the bottom of the screen
 
     leftScoreT = myFont.render(f"Left Score: {leftScore}", True, (255,255,255))
     display.blit(leftScoreT, (200, 10))  # Position it at the bottom of the screen
