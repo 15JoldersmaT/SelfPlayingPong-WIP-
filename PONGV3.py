@@ -29,8 +29,8 @@ obstacles = []
 bestLeft = 100000
 bestRight = 10000
 
-gameTimer = 1800 * 5
-gameTimerMax = 1800 * 5
+gameTimer = 1800 * 2
+gameTimerMax = 1800 * 2
 leftScore = 10000
 rightScore = 10000
 
@@ -73,7 +73,7 @@ class Neural_Network(nn.Module):
 
         self.inputSize =6 
         self.outputSize = 1
-        self.hiddenSize = 2400
+        self.hiddenSize = 240
         
         # weights
         self.W1 = torch.randn(self.inputSize, self.hiddenSize).float() # updated to (4, 3) tensor
@@ -146,11 +146,11 @@ class Ball:
             rightDiff = leftScore - rightScore
             
             better = False
-            if rightDiffLast > rightDiff and rightScore > leftScore:
+            if rightScore < lastRight and rightScore > leftScore:
                 better = True
                 
 
-            if leftDiffLast > leftDiff and leftScore > rightScore:
+            if leftScore < lastLeft and leftScore > rightScore:
                 better = True
 
             if better==True:
@@ -549,6 +549,8 @@ while True:
                speedy = 90000
             if event.key==pygame.K_w:
                 speedy = 120
+            if event.key==pygame.K_e:
+                speedy = 15
             if event.key==pygame.K_s:
                 if show == True:
                     show = False
