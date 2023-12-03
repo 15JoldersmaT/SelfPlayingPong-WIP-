@@ -71,9 +71,9 @@ class Neural_Network(nn.Module):
     def __init__(self, ):
         super(Neural_Network, self).__init__()
 
-        self.inputSize =5 
+        self.inputSize =6 
         self.outputSize = 1
-        self.hiddenSize = 2500
+        self.hiddenSize = 2400
         
         # weights
         self.W1 = torch.randn(self.inputSize, self.hiddenSize).float() # updated to (4, 3) tensor
@@ -400,7 +400,8 @@ class paddle:
                                                     [oY],
                                                     [x2],
                                                     [y2],
-                                                    [spedd]
+                                                    [spedd],
+                                                    [gameTimerA]
                                   
                                                     
         
