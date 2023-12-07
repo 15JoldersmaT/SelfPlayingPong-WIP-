@@ -18,7 +18,7 @@ wall1Y = 300
 wall2Y = 350
 runners = []
 bestDistance = 0
-mutateRate = .20
+mutateRate = .70
 
 #next line of obstacles
 strip = []
@@ -80,7 +80,7 @@ class Neural_Network(nn.Module):
 
         self.inputSize =6 
         self.outputSize = 1
-        self.hiddenSize = 24
+        self.hiddenSize = 2400
         
         # weights
         self.W1 = torch.randn(self.inputSize, self.hiddenSize).float() # updated to (4, 3) tensor
@@ -158,11 +158,11 @@ class Ball:
             rightDiff = leftScore - rightScore
             
             better = False
-            if rightDiff < rightDiffLast and rightScore < lastRight:
+            if rightDiff < rightDiffLast  and rightScore > leftScore:
                 better = True
                 
 
-            if leftDiff < leftDiffLast and leftScore < lastLeft: 
+            if leftDiff < leftDiffLast  and leftScore > rightScore: 
                 better = True
 
             if better==True:
