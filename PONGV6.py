@@ -304,6 +304,8 @@ class Ball:
             
                 #right score
             rightScore = rightScore - 300
+            leftScore = leftScore + 300
+
 
             
 
@@ -318,6 +320,8 @@ class Ball:
                 #left score
             
             leftScore = leftScore - 300
+            rightScore = rightScore + 300
+
 
 
             self.x = 350
@@ -451,7 +455,7 @@ class paddle:
             if mainBall.x < 130 and mainBall.x > 70 and mainBall.y+10  > self.y and mainBall.y+10 < self.y + 60:
                 print ('left1')
                 mainBall.x = 131
-                leftScore = leftScore - 300
+                #leftScore = leftScore - 300
 
                 if mainBall.y < self.y + 30:
                     mainBall.fast = True
@@ -475,7 +479,7 @@ class paddle:
             #Ball coming from right
             if mainBall.x > 570 and mainBall.x < 630 and mainBall.y+10 > self.y and mainBall.y +10< self.y + 60:
                 mainBall.x = 569
-                rightScore = rightScore - 300
+                #rightScore = rightScore - 300
 
                 print('right1')
                 if mainBall.y < self.y + 30:
